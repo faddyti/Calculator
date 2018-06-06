@@ -7,11 +7,23 @@
 //
 
 import Foundation
-class CalculatorBrain{
-    private enum Op {
+class CalculatorBrain {
+    private enum Op: Printable {
         case Operand(Double)
         case UnaryOperation(String, (Double)->Double)
         case BinaryOpertation(String, (Double,Double)->Double)
+        var description: String{
+            get{
+                switch self {
+                case .Operand(let operand):
+                    return "\(operand)"
+                case .UnaryOperation(let symbol, _):
+                    return symbol
+                case .BinaryOpertation(let symbol, _):
+                    return symbol
+                }
+            }
+        }
     }
     
     private var opStack = [Op]()
@@ -23,10 +35,11 @@ class CalculatorBrain{
         return evaluate()
     }
     
-    func performOperation(symbol:String) {
+    func performOperation(symbol:String)->Double? {
         if let operation = knownOps[symbol]{
             opStack.append(operation)
         }
+        return evaluate()
     }
     
     private func evaluate(ops: [Op]) -> (result: Double?, remainingOps: [Op]) {
@@ -55,6 +68,7 @@ class CalculatorBrain{
     }
     func evaluate() -> Double? {
         let (result,remainder) = evaluate(ops: opStack)
+        print("\(opStack) = \(String(describing: result)) with \(remainder)")
         return result
     }
     init() {

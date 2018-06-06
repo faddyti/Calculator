@@ -38,7 +38,6 @@ class ViewController: UIViewController {
             display.text = digit
             userIsInTheTypingAnumber = true
         }
-        print("digit = \(digit)")
     }
     // 操作符的处理
     @IBAction func operate(_ sender: UIButton) {
@@ -57,7 +56,7 @@ class ViewController: UIViewController {
     // 按回车键
     @IBAction func enter() {
         userIsInTheTypingAnumber = false
-        if let result =  brain.pushOperand(operand: displayValue) {
+        if let result = brain.pushOperand(operand: displayValue) {
             displayValue = result
         }
         else{
