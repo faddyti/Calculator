@@ -8,11 +8,11 @@
 
 import Foundation
 class CalculatorBrain {
-    private enum Op: Printable {
+    private enum Op: CustomStringConvertible{
         case Operand(Double)
         case UnaryOperation(String, (Double)->Double)
         case BinaryOpertation(String, (Double,Double)->Double)
-        var description: String{
+        var description: String {
             get{
                 switch self {
                 case .Operand(let operand):
@@ -30,19 +30,22 @@ class CalculatorBrain {
     
     private var knownOps = [String:Op]()
     
-    func pushOperand(operand:Double)->Double? {
+    func pushOperand(operand:Double)->Double?
+    {
         opStack.append(Op.Operand(operand))
         return evaluate()
     }
     
-    func performOperation(symbol:String)->Double? {
+    func performOperation(symbol:String)->Double?
+    {
         if let operation = knownOps[symbol]{
             opStack.append(operation)
         }
         return evaluate()
     }
     
-    private func evaluate(ops: [Op]) -> (result: Double?, remainingOps: [Op]) {
+    private func evaluate(ops: [Op]) -> (result: Double?, remainingOps: [Op])
+    {
         if !ops.isEmpty{
             var remainingOps = ops
             let op = remainingOps.removeLast()
@@ -66,16 +69,21 @@ class CalculatorBrain {
         }
         return(nil,ops)
     }
-    func evaluate() -> Double? {
+    func evaluate() -> Double?
+    {
         let (result,remainder) = evaluate(ops: opStack)
         print("\(opStack) = \(String(describing: result)) with \(remainder)")
         return result
     }
-    init() {
-        knownOps["+"] = Op.BinaryOpertation("+", +)
-        knownOps["−"] = Op.BinaryOpertation("−") { $1 - $0 }
-        knownOps["×"] = Op.BinaryOpertation("×", *)
-        knownOps["÷"] = Op.BinaryOpertation("÷") { $1 / $0 }
-        knownOps["√"] = Op.UnaryOperation("√",sqrt)
+    init()
+    {
+        func learnOp(op: Op){
+            knownOps[op.description] = op
+        }
+        learnOp(op: Op.BinaryOpertation("+", +))
+        learnOp(op: Op.BinaryOpertation("−") { $1 - $0 })
+        learnOp(op: Op.BinaryOpertation("×", *))
+        learnOp(op: Op.BinaryOpertation("÷") { $1 / $0 })
+        learnOp(op: Op.UnaryOperation("√",sqrt))
     }
 }
